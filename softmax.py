@@ -279,6 +279,8 @@ if __name__ == '__main__':
     for iters in range(maxiter):        
         [G,Vmat,XBX,f1,f2] = Derivatives(c,s,t,V,X,B,iX)
         
+        # conjugate gradient method 
+        # find the newton's direction v
         v = np.zeros(n*n);
  
         r = -G
@@ -309,14 +311,15 @@ if __name__ == '__main__':
                 break;
             s = MU*s
             t = PI*t
-            print('update t: {0}'.format(s))
+            print('update s: {0}'.format(s))
         else:
+            # find a proper step size
             for k in range(maxiterls):
                 alpha = beta**(k-1); 
                 step = np.reshape(v,[n,n],'F')
                 X = Xold + alpha*step
                 iX = np.linalg.solve(X,I)
-                # check in domain
+                # check feasibility
                 f1 = funf1(c,V,X);
                 f2 = funf2(B,iX);
                 if(np.min(f1)<0):
@@ -324,14 +327,14 @@ if __name__ == '__main__':
                 # check positive definiteness
                 if(not is_pos_def(X)):
                     continue
-                fcurr=obj(X,s,t,c,V,B);
+                fcurr=obj(X,s,t,c,V,B)
+                # if there is sufficient decreasement then stop
                 if(fcurr<=flast+alpha*sigma*delta):
                     break
 
             print("iter:{0}, fobj:{1}, opt:{2}, cg:{3}, ls:{4}".
                   format(iters,fcurr,delta,i,k))   
     
-#    print(X)
     pcost = np.max(f2)
     print('p =',pcost)
     A = hbn(n,np.int(np.sqrt(n)))
