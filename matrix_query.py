@@ -5,6 +5,7 @@ Created on Fri Jul 17 09:25:16 2020
 @author: 10259
 """
 
+import matrixops
 import numpy as np
 
 def funf1(c,V,X):
@@ -57,20 +58,6 @@ def obj(Y,t,c,V,B):
     F = s*t - np.sum(np.log(f1)) - np.sum(np.log(f2))
     return F
 
-def is_pos_def(A):
-    '''
-    Check positive definiteness 
-    '''
-    # first check symmetry 
-    if np.allclose(A,A.T,1e-5,1e-8):
-        # whether cholesky decomposition is successful
-        try:
-            np.linalg.cholesky(A)
-            return True
-        except np.linalg.LinAlgError:
-            return False
-    else:
-        return False
 
 def workload(n):
     '''
@@ -349,7 +336,7 @@ if __name__ == '__main__':
                 if(np.min([f1,f2])<0):
                     continue
                 # check positive definiteness
-                if(not is_pos_def(X)):
+                if(not matrixops.is_pos_def(X)):
                     continue
                 fcurr=obj(Y,t,c,V,B)
                 # if there is sufficient decreasement then stop
