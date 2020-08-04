@@ -53,7 +53,7 @@ def l2_privacy_cost_vector(strategy: np.ndarray, invcov: np.ndarray = None, cov:
     assert cov is None or invcov is None, "Do not specify both a covariance matrix and its inverse"
     if invcov is None:
         invcov = np.linalg.solve(cov, np.eye(cov.shape[0]))
-    cost = np.sqrt(strategy.T @ invcov @ strategy)
+    cost = np.sqrt(np.diag(strategy.T @ invcov @ strategy))
     return cost
 
 
