@@ -245,7 +245,7 @@ if __name__ == '__main__':
     s = 1
     t = 1
     # maxiter is the total iteration 
-    maxiter = 3000;
+    maxiter = 3000
     # maxitercg is the maximum iteration for conjugate gradient method
     maxitercg = 5
     # maiterls is the maximum iteration for finding a step size
@@ -269,7 +269,7 @@ if __name__ == '__main__':
     # PI : Increament for t
     PI = 5
     # Initial values
-    I = np.eye(n);
+    I = np.eye(n)
     X = 0.8*I
     iX = np.linalg.solve(X,I)
     BXB = B.T @ iX @ B
@@ -281,26 +281,26 @@ if __name__ == '__main__':
         
         # conjugate gradient method 
         # find the newton's direction v
-        v = np.zeros(n*n);
+        v = np.zeros(n*n)
  
         r = -G
-        p = r;
-        rsold = r.dot(r);
+        p = r
+        rsold = r.dot(r)
         for i in range(maxitercg):
             Hp = Hx(f1,f2,s,t,Vmat,iX,XBX,p)
-            a = rsold/(p @ Hp);
-            v = v + a*p;
-            r = r - a * Hp;
-            rsnew = r.dot(r);
+            a = rsold/(p @ Hp)
+            v = v + a*p
+            r = r - a * Hp
+            rsnew = r.dot(r)
     
             if rsnew < theta:
                 break
-            b = rsnew/rsold;
-            p = r + b*p;
-            rsold = rsnew;
+            b = rsnew/rsold
+            p = r + b*p
+            rsold = rsnew
         
         # step size
-        delta = v.dot(G); Xold = X;
+        delta = v.dot(G); Xold = X
         fcurr = obj(X,s,t,c,V,B)
         flast = fcurr; history.append(fcurr)
         
@@ -308,20 +308,20 @@ if __name__ == '__main__':
         if (np.abs(delta) < NTTOL):
             gap = 5*n/s
             if (gap < TOL):
-                break;
+                break
             s = MU*s
             t = PI*t
             print('update s: {0}'.format(s))
         else:
             # find a proper step size
             for k in range(maxiterls):
-                alpha = beta**(k-1); 
+                alpha = beta**(k-1)
                 step = np.reshape(v,[n,n],'F')
                 X = Xold + alpha*step
                 iX = np.linalg.solve(X,I)
                 # check feasibility
-                f1 = funf1(c,V,X);
-                f2 = funf2(B,iX);
+                f1 = funf1(c,V,X)
+                f2 = funf2(B,iX)
                 if(np.min(f1)<0):
                     continue
                 # check positive definiteness
