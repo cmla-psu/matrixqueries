@@ -7,11 +7,11 @@ def is_pos_def(A: np.ndarray):
     """
     pd = False
     # first check symmetry
-    if np.allclose(A, A.T, 1e-5, 1e-8):
+    if np.allclose(A, A.T, rtol=1e-5, atol=1e-8):
         # check if Cholesky decomposition is successful
         try:
             np.linalg.cholesky(A)
             pd = True
         except np.linalg.LinAlgError:
             pd = False
-    return False
+    return pd
