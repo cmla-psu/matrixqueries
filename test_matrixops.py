@@ -1,5 +1,6 @@
 """
-This is pytest testing code. Run pytest or pytest test_matrixops to run the test
+This is pytest testing code.
+Run pytest or pytest test_matrixops to run the test.
 """
 
 import matrixops
