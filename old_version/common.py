@@ -8,7 +8,7 @@ Commonly used functions.
 """
 
 import numpy as np
-import privacy
+# import privacy
 import matrixops
 
 
@@ -31,8 +31,8 @@ def func_var(var_bound: np.ndarray, mat_index: np.ndarray,
     Inequality constraint function for variance.
 
     """
-    mat_var = mat_index @ cov @ mat_index
-    return var_bound - np.diag(mat_var)
+    vec_var = ((mat_index @ cov) * mat_index).sum(axis=1)
+    return var_bound - vec_var
 
 
 def func_pcost(p_cost: float, mat_basis: np.ndarray, invcov: np.ndarray = None,
@@ -60,8 +60,9 @@ def func_pcost(p_cost: float, mat_basis: np.ndarray, invcov: np.ndarray = None,
     assert cov is None or invcov is None
     if invcov is None:
         invcov = np.linalg.solve(cov, np.eye(cov.shape[0]))
-    vec_cost = privacy.l2_privacy_cost_vector(mat_basis, invcov)
+    # vec_cost = privacy.l2_privacy_cost_vector(mat_basis, invcov)
     # vec_cost_square = np.square(vec_cost)
+    vec_cost = ((mat_basis.T @ invcov) * mat_basis.T).sum(axis=1)
     return p_cost - vec_cost
 
 
@@ -145,7 +146,7 @@ def gradient(variable: np.ndarray, param_t: float, var_bound: np.ndarray,
     f_pcost = func_pcost(pcost, mat_basis, invcov)
     mat_b_3d = matrixops.matrix_3d_broadcasting(mat_basis.T)
     # mat_xbx_3d[i,:,:] = -invcov @ mat_b_3d[i,:,:] @ invcov
-    mat_xbx_3d = -invcov @ mat_b_3d @ invcov
+    mat_xbx_3d = 0 - invcov @ mat_b_3d @ invcov
     # g_f_pcost[i] = mat_xbx_3d[i,:,:]/f_pcost[i]
     # component of gradient df2/dX
     g_f_pcost = mat_xbx_3d/f_pcost[:, None, None]
