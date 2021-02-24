@@ -9,8 +9,8 @@ Experiment on marginal queries.
 
 import numpy as np
 import time
-from softmax import configuration, workload, matrix_query, func_var
-from convexdp import ConvexDP, ca_variance
+from softmax import configuration, workload, matrix_query, func_var, gm0_variance
+from convexdp import ConvexDP, ca_variance, wCA
 
 
 def kron_i(mat, vec, i):
@@ -79,9 +79,9 @@ def marginal(d, k, choice, same):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    d = 6
+    d = 5
     k = 2
-    work, bound = marginal(d, k, "one", False)
+    work, bound = marginal(d, k, "two", False)
     param_m, param_n = work.shape
 
     # configuration parameters
@@ -111,6 +111,11 @@ if __name__ == '__main__':
     pcost = mat_opt.pcost
     var = ca_variance(work, strategy, pcost)
     print("var=", np.max(var/bound))
+
+    wstrategy, wvar = wCA(work, bound, pcost)
+
+    gm0 = gm0_variance(work, pcost)
+    print("gm0=", np.max(gm0/bound))
 
     end = time.time()
     print("time: ", end-start)

@@ -50,16 +50,10 @@ def WRelated(param_m, param_n, param_s):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    param_n = 256
-    # param_m = param_n // 2
-    param_m = param_n * 2
-    param_s = param_n // 2
-    work, bound = WRange(param_m, param_n)
-    # work, bound = WRelated(param_m, param_n, param_s)
-    param_m, param_n = np.shape(work)
-    # bound[0] = 5
-    # bound[6] = 5
-    # bound = np.ones(param_m)
+    param_n = 512
+    param_m = param_n
+    work = workload(param_n)
+    bound = np.ones(param_m)
 
     # configuration parameters
     args = configuration()
@@ -80,21 +74,20 @@ if __name__ == '__main__':
     mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 
     acc = func_var(mat_cov, index)
-    print("acc=", np.max(acc/bound), np.sum(acc))
-    print("gm=", np.max(mat_opt.gm/bound), np.sum(mat_opt.gm))
-    print("hm=", np.max(mat_opt.hm/bound), np.sum(mat_opt.hm))
+    print("acc=", np.max(acc/bound))
+    print("gm=", np.max(mat_opt.gm/bound))
+    print("hm=", np.max(mat_opt.hm/bound))
 
     # run CA algorithm
     strategy = ConvexDP(work)
     pcost = mat_opt.pcost
     var = ca_variance(work, strategy, pcost)
-    print("var=", np.max(var/bound), np.sum(var))
+    print("var=", np.max(var/bound))
 
     wstrategy, wvar = wCA(work, bound, pcost)
-    print("wvar=", np.max(wvar/bound), np.sum(wvar))
 
     gm0 = gm0_variance(work, pcost)
-    print("gm0=", np.max(gm0/bound), gm0*param_m)
+    print("gm0=", np.max(gm0/bound))
 
     end = time.time()
     print("time: ", end-start)

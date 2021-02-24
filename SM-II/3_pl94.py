@@ -9,34 +9,41 @@ Experiment on discrete queries.
 
 import numpy as np
 import time
-from softmax import configuration, workload, matrix_query, func_var
-from convexdp import ConvexDP, ca_variance
+from softmax import configuration, workload, matrix_query, func_var, gm0_variance
+from convexdp import ConvexDP, ca_variance, wCA
 
 
 def PL94():
     """Dataset PL94."""
+    # age marginal
     first_1 = np.eye(2)
     second_1 = np.ones((1, 2))
     third_1 = np.ones((1, 63))
     work_age = np.kron(np.kron(first_1, second_1), third_1)
 
+    # ethnicity marginal
     first_2 = np.ones((1, 2))
     second_2 = np.eye(2)
     third_2 = np.ones((1, 63))
     work_eth = np.kron(np.kron(first_2, second_2), third_2)
 
+    # race marginal
     first_3 = np.ones((1, 2))
     second_3 = np.ones((1, 2))
     third_3 = np.eye(63)
     work_race = np.kron(np.kron(first_3, second_3), third_3)
 
+    # identity queries
     work_id = np.eye(252)
 
     work_all = np.concatenate((work_age, work_eth, work_race, work_id))
 
     var = np.ones(319)
-    var[10: 67] = 2
-    var[67:] = 4
+    var[10: 67] = 1
+    var[67:] = 1
+
+    # var[10: 67] = 2
+    # var[67:] = 4
 
     return work_all, var
 
@@ -74,6 +81,11 @@ if __name__ == '__main__':
     pcost = mat_opt.pcost
     var = ca_variance(work, strategy, pcost)
     print("var=", np.max(var/bound))
+
+    wstrategy, wvar = wCA(work, bound, pcost)
+
+    gm0 = gm0_variance(work, pcost)
+    print("gm0=", np.max(gm0/bound))
 
     end = time.time()
     print("time: ", end-start)

@@ -10,33 +10,42 @@ Experiment on age.
 import numpy as np
 import time
 from softmax import configuration, workload, matrix_query, func_var
-from convexdp import ConvexDP, ca_variance
+from convexdp import ConvexDP, ca_variance, wCA
 
 
 def age():
     """Dataset AGE."""
+    # Range queires for each gender
     first_1 = np.eye(2)
     second_1 = workload(116)
     work_gender = np.kron(first_1, second_1)
 
+    # Range queires for both
     first_2 = np.ones((1, 2))
     second_2 = workload(116)
-    work_age = np.kron(first_2, second_2)
+    work_both = np.kron(first_2, second_2)
 
-    add_1 = np.zeros((1, 232))
-    add_1[18:116] = 1
-    add_2 = np.zeros((1, 232))
-    add_2[134:232] = 1
-    add_3 = add_1 + add_2
+    # identity querry
+    eye = np.eye(232)
+    work_all = np.concatenate((work_gender, work_both, eye))
 
-    work_all = np.concatenate((work_gender, work_age, add_1, add_2, add_3))
+    var = np.ones(116*5)*2
+    # var[-232:] = 5
+    var[0] = 1
+    var[116] = 1
 
-    var = np.ones(116*3+3)*10
+    # add_1 = np.zeros((1, 232))
+    # add_1[18:116] = 1
+    # add_2 = np.zeros((1, 232))
+    # add_2[134:232] = 1
+    # add_3 = add_1 + add_2
 
-    var[98] = 1
-    var[214] = 1
-    var[330] = 1
-    var[-3:] = 1
+    # work_all = np.concatenate((work_gender, work_age, add_1, add_2, add_3))
+
+    # var = np.ones(116*3+3)*10
+    # var[98] = 1
+    # var[214] = 1
+    # var[330] = 1
 
     return work_all, var
 
@@ -74,6 +83,8 @@ if __name__ == '__main__':
     pcost = mat_opt.pcost
     var = ca_variance(work, strategy, pcost)
     print("var=", np.max(var/bound))
+
+    wstrategy, wvar = wCA(work, bound, pcost)
 
     end = time.time()
     print("time: ", end-start)

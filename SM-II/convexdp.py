@@ -98,7 +98,7 @@ def ConvexDP(W):
                 fcurr = np.sum(V * iX)
             if fcurr <= flast + alpha * sigma * delta:
                 break
-        print(iteration, fcurr, np.linalg.norm(D), i, j)
+        # print(iteration, fcurr, np.linalg.norm(D), i, j)
 
         if i == maxiterls:
             X = Xold
@@ -170,6 +170,34 @@ def WRelated(param_m, param_n, param_s):
     mat_c = np.random.normal(0, 1, [param_m, param_s])
     work = mat_c @ mat_a
     return work
+
+
+def wCA(work, bound, pcost):
+    """Re-weighted workload for CA, w[i] = c[i]."""
+    m, n = work.shape
+    work_s = np.copy(work)
+    work_s = work_s + 0.0
+    for i in range(m):
+        work_s[i, :] = work[i, :]/bound[i]
+    strat = ConvexDP(work_s)
+    var_s = ca_variance(work_s, strat, pcost)
+    var_s = var_s * bound * bound
+    # print("wvar=", np.max(var_s/bound))
+    return strat, var_s
+
+
+def wCA2(work, bound, pcost):
+    """Re-weighted workload for CA, w[i] = sqrt(c[i])."""
+    m, n = work.shape
+    work_s = np.copy(work)
+    work_s = work_s + 0.0
+    for i in range(m):
+        work_s[i, :] = work[i, :]/np.sqrt(bound[i])
+    strat = ConvexDP(work_s)
+    var_s = ca_variance(work_s, strat, pcost)
+    var_s = var_s * bound
+    print("wvar=", np.max(var_s/bound))
+    return strat, var_s
 
 
 if __name__ == '__main__':

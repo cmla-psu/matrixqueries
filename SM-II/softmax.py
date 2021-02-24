@@ -130,11 +130,8 @@ def gm_variance(W, A, s):
     """
     Calculate the maximum variance for a single query in workload W.
 
-    using HB method with privacy cost at most s.
-
     Parameters
     ----------
-    A is the hb tree structure
     s is the privacy cost
     """
     m, n = A.shape
@@ -145,6 +142,25 @@ def gm_variance(W, A, s):
     Var = W @ pA
     BXB = Var @ (sigma**2*mI) @ Var.T
     a = np.diag(BXB)
+    return a
+
+
+def gm0_variance(W, s):
+    """
+    Calculate the maximum variance for a single query in workload W.
+
+    Parameters
+    ----------
+    s is the privacy cost
+    """
+    m, n = W.shape
+    # pseudoinverse of matrix A
+    # pW = np.linalg.pinv(W)
+    norm = np.linalg.norm(W, 2)
+    sigma = np.sqrt(1/s)
+    BXB = norm**2 * sigma**2
+    # a = np.diag(BXB)
+    a = BXB
     return a
 
 
@@ -420,5 +436,3 @@ def func_var(cov, mat_index):
     vec_d = ((mat_index @ cov) * mat_index).sum(axis=1)
     # vec_d = np.diag(self.cov)
     return vec_d
-
-
