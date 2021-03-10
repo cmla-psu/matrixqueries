@@ -10,7 +10,8 @@ Experiment on age.
 import numpy as np
 import time
 from softmax import configuration, workload, matrix_query, func_var
-from convexdp import ConvexDP, ca_variance, wCA
+from softmax import gm0_variance
+from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 
 def age():
@@ -29,7 +30,7 @@ def age():
     eye = np.eye(232)
     work_all = np.concatenate((work_gender, work_both, eye))
 
-    var = np.ones(116*5)*2
+    var = np.ones(116*5)
     # var[-232:] = 5
     var[0] = 1
     var[116] = 1
@@ -85,6 +86,13 @@ if __name__ == '__main__':
     print("var=", np.max(var/bound))
 
     wstrategy, wvar = wCA(work, bound, pcost)
+    print("wvar=", np.max(wvar/bound))
+
+    wstrategy2, wvar2 = wCA2(work, bound, pcost)
+    print("wvar2=", np.max(wvar2/bound))
+
+    gm0 = gm0_variance(work, pcost)
+    print("gm0=", np.max(gm0/bound))
 
     end = time.time()
     print("time: ", end-start)

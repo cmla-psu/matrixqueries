@@ -196,7 +196,7 @@ def wCA2(work, bound, pcost):
     strat = ConvexDP(work_s)
     var_s = ca_variance(work_s, strat, pcost)
     var_s = var_s * bound
-    print("wvar=", np.max(var_s/bound))
+    # print("wvar=", np.max(var_s/bound))
     return strat, var_s
 
 

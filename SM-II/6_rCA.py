@@ -58,8 +58,8 @@ def test1():
 
 def test_rca():
     """Test rCA methods."""
-    n = 256
-    k = 64
+    n = 10
+    k = 1
     work = np.zeros((n+1, n))
     work[:n, :] = np.eye(n)
     work[n, :] = 1

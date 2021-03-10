@@ -10,7 +10,7 @@ Experiment on discrete queries.
 import numpy as np
 import time
 from softmax import configuration, workload, matrix_query, func_var, gm0_variance
-from convexdp import ConvexDP, ca_variance, wCA
+from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 
 def PL94():
@@ -83,6 +83,10 @@ if __name__ == '__main__':
     print("var=", np.max(var/bound))
 
     wstrategy, wvar = wCA(work, bound, pcost)
+    print("wvar=", np.max(wvar/bound))
+
+    wstrategy2, wvar2 = wCA2(work, bound, pcost)
+    print("wvar2=", np.max(wvar2/bound))
 
     gm0 = gm0_variance(work, pcost)
     print("gm0=", np.max(gm0/bound))

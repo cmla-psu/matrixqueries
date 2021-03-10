@@ -411,6 +411,7 @@ class matrix_query:
                       format(iters, fcurr, self.delta, i, k))
 
         pcost = np.max(self.f_var)*np.max(self.f_pcost)
+        # pcost = 1
         print('pcost =', pcost)
         hb_strategy = hb_strategy_matrix(
             self.size_n, np.int(np.sqrt(self.size_n)))
