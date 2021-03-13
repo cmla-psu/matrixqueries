@@ -4,7 +4,7 @@ Created on Thu Dec 17 10:00:20 2020.
 
 @author: 10259
 
-Experiment on age.
+Experiment on range queries.
 """
 
 import numpy as np
@@ -14,35 +14,33 @@ from softmax import gm0_variance
 from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 
-def age():
-    """Dataset AGE."""
-    # Range queires for each gender
-    first_1 = np.eye(2)
-    second_1 = workload(116)
-    work_gender = np.kron(first_1, second_1)
-
-    # Range queires for both
-    first_2 = np.ones((1, 2))
-    second_2 = workload(116)
-    work_both = np.kron(first_2, second_2)
-
-    work_all = np.concatenate((work_gender, work_both))
-
-    var = np.ones(116*3)
-    return work_all, var
+def WRelated(param_m, param_n, param_s):
+    """Related workload."""
+    mat_a = np.random.normal(0, 1, [param_s, param_n])
+    mat_c = np.random.normal(0, 1, [param_m, param_s])
+    work = mat_c @ mat_a
+    # bound = np.random.randint(1, 11, param_m)
+    bound = np.ones(param_m)
+    return work, bound
 
 
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    work, bound = age()
+    param_n = 1024
+    param_m = param_n // 2
+    param_s = param_n // 2
+    work, bound = WRelated(param_m, param_n, param_s)
     param_m, param_n = np.shape(work)
 
     # configuration parameters
     args = configuration()
     args.init_mat = 'id_index'
-    args.basis = 'work'
-    args.maxitercg = 5
+    # args.init_mat = 'id'
+    # args.id_factor = 300000
+    # args.basis = 'work'
+    args.basis = 'id'
+    args.maxitercg = 3
 
     if args.basis == 'id':
         index = work
@@ -56,24 +54,26 @@ if __name__ == '__main__':
     mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 
     acc = func_var(mat_cov, index)
-    print("acc=", np.max(acc/bound))
-    print("gm=", np.max(mat_opt.gm/bound))
-    print("hm=", np.max(mat_opt.hm/bound))
+    print("acc=", np.max(acc/bound), np.sum(acc))
+    print("gm=", np.max(mat_opt.gm/bound), np.sum(mat_opt.gm))
+    print("hm=", np.max(mat_opt.hm/bound), np.sum(mat_opt.hm))
 
     # run CA algorithm
     strategy = ConvexDP(work)
     pcost = mat_opt.pcost
+    # pcost = 1
     var = ca_variance(work, strategy, pcost)
-    print("var=", np.max(var/bound))
+    print("var=", np.max(var/bound), np.sum(var))
 
     wstrategy, wvar = wCA(work, bound, pcost)
-    print("wvar=", np.max(wvar/bound))
+    print("wvar=", np.max(wvar/bound), np.sum(wvar))
 
     wstrategy2, wvar2 = wCA2(work, bound, pcost)
-    print("wvar2=", np.max(wvar2/bound))
+    print("wvar2=", np.max(wvar2/bound), np.sum(wvar2))
 
     gm0 = gm0_variance(work, pcost)
-    print("gm0=", np.max(gm0/bound))
+    print("gm0=", np.max(gm0/bound), gm0*param_m)
 
+    # np.save("model/range_uniform_1024.npy", mat_opt)
     end = time.time()
     print("time: ", end-start)

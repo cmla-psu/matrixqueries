@@ -10,7 +10,8 @@ Experiment on discrete queries.
 import numpy as np
 import time
 from softmax import configuration, workload, matrix_query, func_var
-from convexdp import ConvexDP, ca_variance, wCA
+from softmax import gm0_variance
+from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 
 def WDiscrete(param_m, param_n, prob):
@@ -19,12 +20,12 @@ def WDiscrete(param_m, param_n, prob):
     work = np.random.choice(2, [param_m, param_n], p)
     # convert int to float, avoid strange bug
     work = 2.0*work - 1
-    size_1 = param_m // 10
-    var_1 = np.random.randint(1, 4, size=size_1)
-    size_2 = param_m - size_1
-    var_2 = np.random.randint(10, 16, size=size_2)
-    var = np.concatenate([var_1, var_2])
-
+    # size_1 = param_m // 10
+    # var_1 = np.random.randint(1, 4, size=size_1)
+    # size_2 = param_m - size_1
+    # var_2 = np.random.randint(10, 16, size=size_2)
+    # var = np.concatenate([var_1, var_2])
+    var = np.random.randint(1, 11, param_m)
     return work, var
 
 
@@ -41,8 +42,8 @@ if __name__ == '__main__':
     args = configuration()
     args.init_mat = 'id_index'
     # args.init_mat = 'hb'
-    # args.init_mat = 'id'
-    # args.id_factor = 16
+    args.init_mat = 'id'
+    args.id_factor = 20000
     # args.basis = 'work'
     args.basis = 'id'
     args.maxitercg = 5
@@ -70,6 +71,16 @@ if __name__ == '__main__':
     print("var=", np.max(var/bound))
 
     wstrategy, wvar = wCA(work, bound, pcost)
+    print("wvar=", np.max(wvar/bound), np.sum(wvar))
+
+    wstrategy2, wvar2 = wCA2(work, bound, pcost)
+    print("wvar2=", np.max(wvar2/bound))
+
+    gm0 = gm0_variance(work, pcost)
+    print("gm0=", np.max(gm0/bound))
+    res = [pcost, bound, var, wvar, wvar2, gm0]
+    # np.save("res.npy", res)
+    # np.save("marginal_15.npy", mat_opt)
 
     end = time.time()
     print("time: ", end-start)

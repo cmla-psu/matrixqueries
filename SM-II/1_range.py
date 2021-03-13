@@ -9,8 +9,9 @@ Experiment on range queries.
 
 import numpy as np
 import time
-from softmax import configuration, workload, matrix_query, func_var, gm0_variance
-from convexdp import ConvexDP, ca_variance, wCA
+from softmax import configuration, workload, matrix_query, func_var
+from softmax import gm0_variance
+from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 
 def WRange(param_m, param_n):
@@ -20,9 +21,7 @@ def WRange(param_m, param_n):
     for i in range(param_m):
         num_1 = np.random.randint(param_n)
         num_2 = np.random.randint(param_n)
-        # num = np.random.randint(1, 11)
-        # num = np.random.randint(1, 2)
-        num = 5
+        num = np.random.randint(1, 11)
         if num_1 < num_2:
             low = num_1
             high = num_2
@@ -31,40 +30,22 @@ def WRange(param_m, param_n):
             high = num_1
         work[i, low:high+1] = 1
         var[i] = num
-    ones = np.ones([1, param_n])
-    work = np.append(work, ones, axis=0)
-    var = np.append(var, 1)
     return work, var
-
-
-def WRelated(param_m, param_n, param_s):
-    """Related workload."""
-    mat_a = np.random.normal(0, 1, [param_s, param_n])
-    mat_c = np.random.normal(0, 1, [param_m, param_s])
-    work = mat_c @ mat_a
-    # bound = np.ones(param_m)
-    bound = np.random.randint(1, 10, param_m)
-    # bound[1:5] = 1
-    return work, bound
 
 
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    param_n = 256
-    # param_m = param_n // 2
+    param_n = 1024
     param_m = param_n * 2
-    param_s = param_n // 2
     work, bound = WRange(param_m, param_n)
-    # work, bound = WRelated(param_m, param_n, param_s)
     param_m, param_n = np.shape(work)
-    # bound[0] = 5
-    # bound[6] = 5
-    # bound = np.ones(param_m)
 
     # configuration parameters
     args = configuration()
     args.init_mat = 'id_index'
+    # args.init_mat = 'id'
+    # args.id_factor = 300000
     args.basis = 'work'
     # args.basis = 'id'
     args.maxitercg = 5
@@ -94,6 +75,9 @@ if __name__ == '__main__':
 
     wstrategy, wvar = wCA(work, bound, pcost)
     print("wvar=", np.max(wvar/bound), np.sum(wvar))
+
+    wstrategy2, wvar2 = wCA2(work, bound, pcost)
+    print("wvar2=", np.max(wvar2/bound), np.sum(wvar2))
 
     gm0 = gm0_variance(work, pcost)
     print("gm0=", np.max(gm0/bound), gm0*param_m)

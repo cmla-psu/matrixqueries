@@ -81,7 +81,7 @@ if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
     r = 3
-    k = 16
+    k = 5
     work1, bound1 = marginal(r, k, "one", True)
     work2, bound2 = marginal(r, k, "two", True)
     work = np.concatenate((work1, work2))
@@ -91,6 +91,9 @@ if __name__ == '__main__':
     # configuration parameters
     args = configuration()
     args.init_mat = 'id_index'
+    # args.init_mat = 'id'
+    # args.id_factor = 50
+    print(args.id_factor)
     args.basis = 'id'
     args.maxitercg = 5
 
@@ -128,6 +131,7 @@ if __name__ == '__main__':
 
     gm0 = gm0_variance(work, pcost)
     print("gm0=", np.max(gm0/bound))
+    # np.save("marginal_16.npy", mat_opt)
 
     end = time.time()
     print("time: ", end-start)

@@ -23,7 +23,7 @@ def configuration():
     """
     parser = argparse.ArgumentParser(description='Matrix Query')
 
-    parser.add_argument('--maxiter', default=1_000_000, help='total iteration')
+    parser.add_argument('--maxiter', default=1000000, help='total iteration')
     parser.add_argument('--maxitercg', default=5,
                         help='maximum iteration for conjugate gradient method')
     parser.add_argument('--maxiterls', default=50,
