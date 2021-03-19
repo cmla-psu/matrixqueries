@@ -10,6 +10,7 @@ Experiment on range queries.
 import numpy as np
 import time
 from softmax import configuration, workload, matrix_query, func_var
+from softmax import gm0_variance
 from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 
@@ -58,8 +59,8 @@ def test1():
 
 def test_rca():
     """Test rCA methods."""
-    n = 10
-    k = 1
+    n = 100*10
+    k = 4
     work = np.zeros((n+1, n))
     work[:n, :] = np.eye(n)
     work[n, :] = 1
@@ -82,14 +83,8 @@ def WRelated(param_m, param_n, param_s):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    param_n = 4
-    # param_m = param_n // 2
-    param_m = param_n * 2
-    param_s = param_n // 2
-    # work, bound = WRange(param_m, param_n)
     work, bound = test_rca()
     param_m, param_n = np.shape(work)
-    # bound = np.ones(param_m)
 
     # configuration parameters
     args = configuration()
@@ -110,19 +105,25 @@ if __name__ == '__main__':
     mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 
     acc = func_var(mat_cov, index)
-    print("acc=", np.max(acc/bound))
-    print("gm=", np.max(mat_opt.gm/bound))
-    print("hm=", np.max(mat_opt.hm/bound))
+    print("acc=", np.max(acc/bound), np.sum(acc))
+    print("gm=", np.max(mat_opt.gm/bound), np.sum(mat_opt.gm))
+    print("hm=", np.max(mat_opt.hm/bound), np.sum(mat_opt.hm))
 
     # run CA algorithm
     strategy = ConvexDP(work)
     pcost = mat_opt.pcost
+    # pcost = 1
     var = ca_variance(work, strategy, pcost)
-    print("var=", np.max(var/bound))
+    print("var=", np.max(var/bound), np.sum(var))
 
     wstrategy, wvar = wCA(work, bound, pcost)
+    print("wvar=", np.max(wvar/bound), np.sum(wvar))
 
     wstrategy2, wvar2 = wCA2(work, bound, pcost)
+    print("wvar2=", np.max(wvar2/bound), np.sum(wvar2))
+
+    gm0 = gm0_variance(work, pcost)
+    print("gm0=", np.max(gm0/bound), gm0*param_m)
 
     end = time.time()
     print("time: ", end-start)

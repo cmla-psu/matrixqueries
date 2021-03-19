@@ -77,3 +77,17 @@ if __name__ == '__main__':
     # np.save("model/range_uniform_1024.npy", mat_opt)
     end = time.time()
     print("time: ", end-start)
+
+    variance_wca = 1.07
+    # variance_wca = np.max(var/bound)
+    total_error = np.sum(var)
+    ratio_gm = np.sum(mat_opt.gm)/total_error
+    ratio_hm = np.sum(mat_opt.hm)/total_error
+    # ratio_wca1 = np.sum(wvar)/total_error
+    ratio_wca1 = 1.00
+    ratio_wca2 = 1.00
+    # ratio_wca2 = np.sum(wvar2)/total_error
+    true_variance = total_error/np.max(var/bound)*variance_wca
+    ratio_sm = np.sum(bound)/true_variance
+    print('& {0:.2f} & {1:.2f} & {2:.2f} & {3:.2f} &{4:.2f} & {5:.2f}'.format(
+        ratio_gm, ratio_hm, 1.00, ratio_wca1, ratio_wca2, ratio_sm))

@@ -50,7 +50,7 @@ def WRelated(param_m, param_n, param_s):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    param_n = 256
+    param_n = 128
     param_m = param_n
     work = workload(param_n)
     bound = np.ones(param_m)

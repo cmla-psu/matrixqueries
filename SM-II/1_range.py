@@ -22,6 +22,7 @@ def WRange(param_m, param_n):
         num_1 = np.random.randint(param_n)
         num_2 = np.random.randint(param_n)
         num = np.random.randint(1, 11)
+        num = 1
         if num_1 < num_2:
             low = num_1
             high = num_2
@@ -36,7 +37,7 @@ def WRange(param_m, param_n):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    param_n = 1024
+    param_n = 64
     param_m = param_n * 2
     work, bound = WRange(param_m, param_n)
     param_m, param_n = np.shape(work)

@@ -26,6 +26,7 @@ def WDiscrete(param_m, param_n, prob):
     # var_2 = np.random.randint(10, 16, size=size_2)
     # var = np.concatenate([var_1, var_2])
     var = np.random.randint(1, 11, param_m)
+    # var = np.ones(param_m)
     return work, var
 
 
@@ -42,8 +43,8 @@ if __name__ == '__main__':
     args = configuration()
     args.init_mat = 'id_index'
     # args.init_mat = 'hb'
-    args.init_mat = 'id'
-    args.id_factor = 20000
+    # args.init_mat = 'id'
+    # args.id_factor = 20000
     # args.basis = 'work'
     args.basis = 'id'
     args.maxitercg = 5
@@ -60,27 +61,36 @@ if __name__ == '__main__':
     mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 
     acc = func_var(mat_cov, index)
-    print("acc=", np.max(acc/bound))
-    print("gm=", np.max(mat_opt.gm/bound))
-    print("hm=", np.max(mat_opt.hm/bound))
+    print("acc=", np.max(acc/bound), np.sum(acc))
+    print("gm=", np.max(mat_opt.gm/bound), np.sum(mat_opt.gm))
+    print("hm=", np.max(mat_opt.hm/bound), np.sum(mat_opt.hm))
 
     # run CA algorithm
     strategy = ConvexDP(work)
     pcost = mat_opt.pcost
     var = ca_variance(work, strategy, pcost)
-    print("var=", np.max(var/bound))
+    print("var=", np.max(var/bound), np.sum(var))
 
     wstrategy, wvar = wCA(work, bound, pcost)
     print("wvar=", np.max(wvar/bound), np.sum(wvar))
 
     wstrategy2, wvar2 = wCA2(work, bound, pcost)
-    print("wvar2=", np.max(wvar2/bound))
+    print("wvar2=", np.max(wvar2/bound), np.sum(wvar2))
 
     gm0 = gm0_variance(work, pcost)
-    print("gm0=", np.max(gm0/bound))
-    res = [pcost, bound, var, wvar, wvar2, gm0]
-    # np.save("res.npy", res)
-    # np.save("marginal_15.npy", mat_opt)
+    print("gm0=", np.max(gm0/bound), gm0*param_m)
 
     end = time.time()
     print("time: ", end-start)
+
+    # variance_wca = 2.49
+    variance_wca = np.max(var/bound)
+    total_error = np.sum(var)
+    ratio_gm = np.sum(mat_opt.gm)/total_error
+    ratio_hm = np.sum(mat_opt.hm)/total_error
+    ratio_wca1 = np.sum(wvar)/total_error
+    ratio_wca2 = np.sum(wvar2)/total_error
+    true_variance = total_error/np.max(var/bound)*variance_wca
+    ratio_sm = np.sum(bound)/true_variance
+    print('& {0:.2f} & {1:.2f} & {2:.2f} & {3:.2f} & {4:.2f}'.format(
+        ratio_gm, ratio_hm, ratio_wca1, ratio_wca2, ratio_sm))
