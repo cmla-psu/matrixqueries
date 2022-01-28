@@ -80,8 +80,8 @@ def marginal(d, k, choice, same):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    r = 3
-    k = 16
+    r = 16
+    k = 2
     work1, bound1 = marginal(r, k, "one", True)
     work2, bound2 = marginal(r, k, "two", True)
     work = np.concatenate((work1, work2))
