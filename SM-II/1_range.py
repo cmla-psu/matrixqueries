@@ -26,12 +26,11 @@ SOFTWARE.
 import numpy as np
 import time
 from softmax import configuration, workload, matrix_query, func_var
-from softmax import gm0_variance
 from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 
-def WRange(param_m, param_n):
-    """Range Workload."""
+def WRange(param_m, param_n, uniform=False):
+    """Range Workload of size (m, n)."""
     work = np.zeros([param_m, param_n])
     var = np.ones(param_m)
     for i in range(param_m):
@@ -47,6 +46,8 @@ def WRange(param_m, param_n):
             high = num_1
         work[i, low:high+1] = 1
         var[i] = num
+    if uniform:
+        var = np.ones(param_m)
     return work, var
 
 
@@ -55,16 +56,15 @@ if __name__ == '__main__':
     np.random.seed(0)
     param_n = 64
     param_m = param_n * 2
-    work, bound = WRange(param_m, param_n)
+    # set uniform=True to use uniform accuracy constraints
+    # set uniform=False to use random accuracy constraints
+    work, bound = WRange(param_m, param_n, uniform=True)
     param_m, param_n = np.shape(work)
 
     # configuration parameters
     args = configuration()
     args.init_mat = 'id_index'
-    # args.init_mat = 'id'
-    # args.id_factor = 300000
     args.basis = 'work'
-    # args.basis = 'id'
     args.maxitercg = 5
 
     if args.basis == 'id':
@@ -79,26 +79,21 @@ if __name__ == '__main__':
     mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 
     acc = func_var(mat_cov, index)
-    print("acc=", np.max(acc/bound), np.sum(acc))
-    print("gm=", np.max(mat_opt.gm/bound), np.sum(mat_opt.gm))
-    print("hm=", np.max(mat_opt.hm/bound), np.sum(mat_opt.hm))
+    print("SM-II=", np.max(acc/bound))
+    print("IP=", np.max(mat_opt.gm/bound))
+    print("HM=", np.max(mat_opt.hm/bound))
 
     # run CA algorithm
     strategy = ConvexDP(work)
     pcost = mat_opt.pcost
-    # pcost = 1
     var = ca_variance(work, strategy, pcost)
-    print("var=", np.max(var/bound), np.sum(var))
+    print("CA=", np.max(var/bound))
 
     wstrategy, wvar = wCA(work, bound, pcost)
-    print("wvar=", np.max(wvar/bound), np.sum(wvar))
+    print("wCA-I=", np.max(wvar/bound))
 
     wstrategy2, wvar2 = wCA2(work, bound, pcost)
-    print("wvar2=", np.max(wvar2/bound), np.sum(wvar2))
+    print("wCA-II=", np.max(wvar2/bound))
 
-    gm0 = gm0_variance(work, pcost)
-    print("gm0=", np.max(gm0/bound), gm0*param_m)
-
-    # np.save("model/range_uniform_1024.npy", mat_opt)
     end = time.time()
     print("time: ", end-start)
