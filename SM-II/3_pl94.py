@@ -51,15 +51,11 @@ def PL94():
 
     # identity queries
     work_id = np.eye(252)
-
     work_all = np.concatenate((work_age, work_eth, work_race, work_id))
 
     var = np.ones(319)
     var[10: 67] = 1
     var[67:] = 1
-
-    # var[10: 67] = 2
-    # var[67:] = 4
 
     return work_all, var
 
@@ -88,23 +84,22 @@ if __name__ == '__main__':
     mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 
     acc = func_var(mat_cov, index)
-    print("acc=", np.max(acc/bound), np.sum(acc))
-    print("gm=", np.max(mat_opt.gm/bound), np.sum(mat_opt.gm))
-    print("hm=", np.max(mat_opt.hm/bound), np.sum(mat_opt.hm))
+    print("SM-II=", np.max(acc/bound))
+    print("IP=", np.max(mat_opt.gm/bound))
+    print("HM=", np.max(mat_opt.hm/bound))
+
     # run CA algorithm
     strategy = ConvexDP(work)
     pcost = mat_opt.pcost
     var = ca_variance(work, strategy, pcost)
-    print("var=", np.max(var/bound), np.sum(var))
+    print("CA=", np.max(var/bound))
 
     wstrategy, wvar = wCA(work, bound, pcost)
-    print("wvar=", np.max(wvar/bound), np.sum(wvar))
+    print("wCA-I=", np.max(wvar/bound))
 
     wstrategy2, wvar2 = wCA2(work, bound, pcost)
-    print("wvar2=", np.max(wvar2/bound), np.sum(wvar2))
-
-    gm0 = gm0_variance(work, pcost)
-    print("gm0=", np.max(gm0/bound), gm0*param_m)
+    print("wCA-II=", np.max(wvar2/bound))
 
     end = time.time()
     print("time: ", end-start)
+
