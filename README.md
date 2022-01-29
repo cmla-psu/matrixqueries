@@ -28,7 +28,7 @@ mat_opt = matrix_query(args, basis, index, bound)
 mat_opt.optimize()
 ```
 
-The following files have the experiments in the paper,
+The following files have the experiments in the paper. Note that due to randomness and different machine performance, the result may not be exactly the same as the numbers in the paper. It's suggested that you start from small workloads (set the number of queries `param_m = 64`).
 
 - **1_range.py:** Experiment for range queries (section 7.4)
 - **2_discrete.py**: Experiment for random queries (section 7.5)
