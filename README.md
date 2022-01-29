@@ -35,12 +35,9 @@ The following files have the experiments in the paper. Note that due to randomne
 - **3_pl94.py:** Experiment for PL-94 (section 7.3)
 - **4_age.py:** Experiment for Age Pyramids (section 7.6)
 - **5_marginal.py:** Experiment for marginals (section 7.7)
+- **6_related.py:** Experiment for related queries (section7.8)
 
 Simply run the main function, change the parameters for different settings. You can also change the hyperparameters in the code to achieve more accurate result.
-
-
-
-## Customizing the detection
 
 
 
