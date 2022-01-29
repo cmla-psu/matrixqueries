@@ -61,4 +61,4 @@ You are encouraged to cite the following [paper](https://arxiv.org/abs/2012.0013
 
 ## License
 
-[MIT](https://github.com/yxwangcs/statdp/blob/master/LICENSE).
+[MIT](https://github.com/cmla-psu/matrixqueries/blob/master/LICENSE).
