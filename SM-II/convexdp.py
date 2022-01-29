@@ -202,7 +202,7 @@ def wCA2(work, bound, pcost):
 
 if __name__ == '__main__':
     np.random.seed(0)
-    param_n = 1024
+    param_n = 128
     param_m = 2*param_n
     param_s = param_n // 2
     # W = WRange(param_m, param_n)

@@ -33,7 +33,7 @@ def WDiscrete(param_m, param_n, prob):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    param_n = 1024
+    param_n = 64
     param_m = 2*param_n
     # param_m = param_n // 2
     param_s = param_n // 2
