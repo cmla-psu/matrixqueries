@@ -26,7 +26,6 @@ SOFTWARE.
 import numpy as np
 import time
 from softmax import configuration, workload, matrix_query, func_var
-from softmax import gm0_variance
 from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 
@@ -43,7 +42,7 @@ def WRelated(param_m, param_n, param_s):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
-    param_n = 1024
+    param_n = 64
     param_m = param_n // 2
     param_s = param_n // 2
     work, bound = WRelated(param_m, param_n, param_s)
@@ -52,9 +51,6 @@ if __name__ == '__main__':
     # configuration parameters
     args = configuration()
     args.init_mat = 'id_index'
-    # args.init_mat = 'id'
-    # args.id_factor = 300000
-    # args.basis = 'work'
     args.basis = 'id'
     args.maxitercg = 3
 
@@ -70,40 +66,22 @@ if __name__ == '__main__':
     mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 
     acc = func_var(mat_cov, index)
-    print("acc=", np.max(acc/bound), np.sum(acc))
-    print("gm=", np.max(mat_opt.gm/bound), np.sum(mat_opt.gm))
-    print("hm=", np.max(mat_opt.hm/bound), np.sum(mat_opt.hm))
+    print("SM-II=", np.max(acc/bound))
+    print("IP=", np.max(mat_opt.gm/bound))
+    print("HM=", np.max(mat_opt.hm/bound))
 
     # run CA algorithm
     strategy = ConvexDP(work)
     pcost = mat_opt.pcost
-    # pcost = 1
     var = ca_variance(work, strategy, pcost)
-    print("var=", np.max(var/bound), np.sum(var))
+    print("CA=", np.max(var/bound))
 
     wstrategy, wvar = wCA(work, bound, pcost)
-    print("wvar=", np.max(wvar/bound), np.sum(wvar))
+    print("wCA-I=", np.max(wvar/bound))
 
     wstrategy2, wvar2 = wCA2(work, bound, pcost)
-    print("wvar2=", np.max(wvar2/bound), np.sum(wvar2))
+    print("wCA-II=", np.max(wvar2/bound))
 
-    gm0 = gm0_variance(work, pcost)
-    print("gm0=", np.max(gm0/bound), gm0*param_m)
-
-    # np.save("model/range_uniform_1024.npy", mat_opt)
     end = time.time()
     print("time: ", end-start)
 
-    variance_wca = 1.07
-    # variance_wca = np.max(var/bound)
-    total_error = np.sum(var)
-    ratio_gm = np.sum(mat_opt.gm)/total_error
-    ratio_hm = np.sum(mat_opt.hm)/total_error
-    # ratio_wca1 = np.sum(wvar)/total_error
-    ratio_wca1 = 1.00
-    ratio_wca2 = 1.00
-    # ratio_wca2 = np.sum(wvar2)/total_error
-    true_variance = total_error/np.max(var/bound)*variance_wca
-    ratio_sm = np.sum(bound)/true_variance
-    print('& {0:.2f} & {1:.2f} & {2:.2f} & {3:.2f} &{4:.2f} & {5:.2f}'.format(
-        ratio_gm, ratio_hm, 1.00, ratio_wca1, ratio_wca2, ratio_sm))
