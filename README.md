@@ -20,12 +20,17 @@ The following code solves the Fitness-for-use problem using SM-II algorithm, you
 
 ```python
 from softmax import configuration, matrix_query
+
 args = configuration()
 # basis matrix is B
 # index matrix is L
 # bound vector is c
 mat_opt = matrix_query(args, basis, index, bound)
 mat_opt.optimize()
+
+# scale the covariacen matrix
+# make it satisfy all accuracy constraints 
+mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 ```
 
 The following files have the experiments in the paper. Note that due to randomness and different machine performance, the result may not be exactly the same as the numbers in the paper. It's suggested that you start from small workloads (set the number of queries `param_m = 64`). For large workloads (`param_m = 1024`), it could take hours to finish, you can speed up by setting args.maxitercg = 3, or try to use [cupy](https://cupy.dev/) instead of numpy.
