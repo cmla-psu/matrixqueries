@@ -1,6 +1,6 @@
 # Fitness-For-Use 
 
-Sourse code for the paper Optimizing Fitness-For-Use of Differentially Private Linear Queries.
+Sourse code for the paper  [Optimizing Fitness-For-Use of Differentially Private Linear Queries](https://arxiv.org/abs/2012.00135).
 
 ## Description
 
@@ -9,8 +9,8 @@ This is a convex optimization problem with inequality constraints. We use the ba
 The algorithms are implemented in the following files. 
 
 -  **softmax.py**:  Implementation of the algorithms SM-II, IP, HM
-
-- **convexdp.py**: Implementation of algorithms CA, wCA-I, wCA-II
+-  **convexdp.py**: Implementation of algorithms CA, wCA-I, wCA-II
+   - The pseudo-code of CA algorithm can be found in the appendix of the paper [Convex Optimization for Linear Query Processing under Approximate Differential Privacy](https://arxiv.org/abs/1602.04302).
 
 
 
@@ -40,13 +40,13 @@ The following files have the experiments in the paper. Note that due to randomne
   - For t=16, it takes around 3 days to finish.
 - **6_related.py:** Experiment for related queries (section7.8)
 
-Simply run the main function, change the parameters for different settings. You can also change the hyperparameters in the code to achieve more accurate result.
+Simply run the main function, change the parameters for different settings. You can also change the hyperparameters in the code to achieve more accurate result, check **softmax.configuration()** for details of tunable hyperparameters.
 
 
 
 ## Citing this work
 
-You are encouraged to cite the following [paper](https://arxiv.org/abs/2012.00135) if you use this tool for academic research:
+You are encouraged to cite the paper [Optimizing Fitness-For-Use of Differentially Private Linear Queries](https://arxiv.org/abs/2012.00135) if you use this tool for academic research:
 
 ```bibtex
 @article{xiao2020optimizing,

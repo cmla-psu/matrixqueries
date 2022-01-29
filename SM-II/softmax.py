@@ -61,7 +61,7 @@ def configuration():
     parser.add_argument('--MU', default=2, help='increment for '
                         'barrier approximation parameter self.param_t')
     parser.add_argument('--init_mat', default='id_index',
-                        help='id: identity mat; hb: hb mat')
+                        help='id_index method is sufficient as an initialization.')
     parser.add_argument('--basis', default='work',
                         help='id: id mat; work: work mat')
     return parser.parse_args()
