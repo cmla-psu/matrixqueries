@@ -36,7 +36,7 @@ The following files have the experiments in the paper,
 - **4_age.py:** Experiment for Age Pyramids (section 7.6)
 - **5_marginal.py:** Experiment for marginals (section 7.7)
 
-Simply run the main function, change the parameter n for different settings. You can also change the hyperparameters in the code to achieve more accurate result.
+Simply run the main function, change the parameters for different settings. You can also change the hyperparameters in the code to achieve more accurate result.
 
 
 
