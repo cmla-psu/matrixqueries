@@ -95,10 +95,11 @@ def marginal(d, k, choice, same):
 if __name__ == '__main__':
     start = time.time()
     np.random.seed(0)
+    # r is fixed, change t in [2, 16]
     r = 3
-    k = 4
-    work1, bound1 = marginal(r, k, "one", True)
-    work2, bound2 = marginal(r, k, "two", True)
+    t = 4
+    work1, bound1 = marginal(r, t, "one", True)
+    work2, bound2 = marginal(r, t, "two", True)
     work = np.concatenate((work1, work2))
     bound = np.concatenate((bound1, bound2))
     param_m, param_n = work.shape

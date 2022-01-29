@@ -34,7 +34,6 @@ def WRelated(param_m, param_n, param_s):
     mat_a = np.random.normal(0, 1, [param_s, param_n])
     mat_c = np.random.normal(0, 1, [param_m, param_s])
     work = mat_c @ mat_a
-    # bound = np.random.randint(1, 11, param_m)
     bound = np.ones(param_m)
     return work, bound
 
