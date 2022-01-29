@@ -60,10 +60,8 @@ def configuration():
                         help='determine when to stop the whole program')
     parser.add_argument('--MU', default=2, help='increment for '
                         'barrier approximation parameter self.param_t')
-    parser.add_argument('--init_mat', default='id',
+    parser.add_argument('--init_mat', default='id_index',
                         help='id: identity mat; hb: hb mat')
-    parser.add_argument('--id_factor', default=4,
-                        help='factor of id mat')
     parser.add_argument('--basis', default='work',
                         help='id: id mat; work: work mat')
     return parser.parse_args()
@@ -71,9 +69,9 @@ def configuration():
 
 def workload(n, dtype=np.float32):
     """
-    Create the workload matrix of example 3.
+    Create the upper triangular matrix with elements of 1.
 
-    Return the workload matrix.
+    Return as the basis matrix.
     """
     mat_w = np.triu(np.ones([n, n]))
     return mat_w
@@ -161,49 +159,6 @@ def gm_variance(W, A, s):
     return a
 
 
-def gm0_variance(W, s):
-    """
-    Calculate the maximum variance for a single query in workload W.
-
-    Parameters
-    ----------
-    s is the privacy cost
-    """
-    m, n = W.shape
-    # pseudoinverse of matrix A
-    # pW = np.linalg.pinv(W)
-    norm = np.linalg.norm(W, 2)
-    sigma = np.sqrt(1/s)
-    BXB = norm**2 * sigma**2
-    # a = np.diag(BXB)
-    a = BXB
-    return a
-
-
-def init_cov(param_n, work, bound):
-    """Choose a query matrix for initializaion."""
-    # mat_q = workload(param_n)
-    param_k = int(np.sqrt(param_n))
-    mat_q = hb_strategy_matrix(param_n, param_k)
-    mat_inv_q = np.linalg.pinv(mat_q)
-    mat_b_q = work @ mat_inv_q
-    mat_cov = mat_inv_q @ mat_inv_q.T
-    sigma = np.min(np.min(bound) / np.diag(mat_b_q @ mat_b_q.T))*0.9
-    mat_cov = sigma * mat_cov
-    return mat_cov
-
-
-def init_ca(param_n, work, bound):
-    """Choose CA result as initialization."""
-    name = 'ca_' + 'marginal' + '.npy'
-    mat_ca = np.load(name)
-    mat_cov = mat_ca @ mat_ca.T
-    mat_b_q = work @ mat_ca
-    sigma = np.min(bound / np.diag(mat_b_q @ mat_b_q.T))*0.99
-    mat_cov = sigma * mat_cov
-    return mat_cov
-
-
 class matrix_query:
     """Class for matrix query optimization."""
 
@@ -251,12 +206,6 @@ class matrix_query:
             diag = np.diag(self.mat_index @ self.mat_index.T)
             sigma = np.min(self.var_bound/diag)
             self.cov = self.mat_id*self.size_n*sigma
-        if self.args.init_mat == 'id':
-            self.cov = self.mat_id*self.size_n/self.args.id_factor
-        if self.args.init_mat == 'hb':
-            self.cov = init_cov(self.size_n, self.mat_index, self.var_bound)
-        if self.args.init_mat == 'ca':
-            self.cov = init_ca(self.size_n, self.mat_index, self.var_bound)
         self.invcov = np.linalg.solve(self.cov, self.mat_id)
         self.f_var = self.func_var()
         self.f_pcost = self.func_pcost()

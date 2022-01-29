@@ -26,7 +26,6 @@ SOFTWARE.
 import numpy as np
 import time
 from softmax import configuration, workload, matrix_query, func_var
-from softmax import gm0_variance
 from convexdp import ConvexDP, ca_variance, wCA, wCA2
 
 

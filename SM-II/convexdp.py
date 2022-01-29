@@ -148,46 +148,6 @@ def ca_variance(W, A, s):
     return a
 
 
-def WRange(param_m, param_n):
-    """Range Workload."""
-    work = np.zeros([param_m, param_n])
-    for i in range(param_m):
-        num_1 = np.random.randint(param_n)
-        num_2 = np.random.randint(param_n)
-        if num_1 < num_2:
-            low = num_1
-            high = num_2
-        else:
-            low = num_2
-            high = num_1
-        work[i, low:high+1] = 1
-    return work
-
-
-def seg_max(vec, k):
-    """Find the maximum for each k elements."""
-    mat = np.reshape(vec, [-1, k])
-    seg = np.max(mat, 1)
-    return seg
-
-
-def WDiscrete(param_m, param_n, prob):
-    """Discrete workload."""
-    # work = np.zeros([param_m, param_n])
-    p = [1-prob, prob]
-    work = np.random.choice(2, [param_m, param_n], p)
-    work = 2*work - 1
-    return work
-
-
-def WRelated(param_m, param_n, param_s):
-    """Related workload."""
-    mat_a = np.random.normal(0, 1, [param_s, param_n])
-    mat_c = np.random.normal(0, 1, [param_m, param_s])
-    work = mat_c @ mat_a
-    return work
-
-
 def wCA(work, bound, pcost):
     """Re-weighted workload for CA, w[i] = c[i]."""
     m, n = work.shape
@@ -198,7 +158,6 @@ def wCA(work, bound, pcost):
     strat = ConvexDP(work_s)
     var_s = ca_variance(work_s, strat, pcost)
     var_s = var_s * bound * bound
-    # print("wvar=", np.max(var_s/bound))
     return strat, var_s
 
 
@@ -212,29 +171,6 @@ def wCA2(work, bound, pcost):
     strat = ConvexDP(work_s)
     var_s = ca_variance(work_s, strat, pcost)
     var_s = var_s * bound
-    # print("wvar=", np.max(var_s/bound))
     return strat, var_s
 
 
-if __name__ == '__main__':
-    np.random.seed(0)
-    param_n = 128
-    param_m = 2*param_n
-    param_s = param_n // 2
-    # W = WRange(param_m, param_n)
-    W = WDiscrete(param_m, param_n, 0.2)
-    # W = WRelated(param_m, param_n, param_s)
-    iD = np.eye(param_n)
-    V = W.T @ W
-    A = ConvexDP(W)
-
-    iX = np.linalg.solve(A.T, np.linalg.solve(A, iD))
-    fcurr = np.sum(V * iX)
-    # print(fcurr/param_m)
-    name = 'ca_' + str(param_n) + '.npy'
-    # np.save(name, A)
-
-    # p_cost = {2: 1.333, 4: 1.9, 8: 2.483, 16: 3.237,
-    #           64: 5.642, 256: 8.862, 1024: 13.008}
-    var = ca_variance(W, A, 44.59)
-    print("var=", np.max(var))

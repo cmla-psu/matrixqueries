@@ -28,13 +28,16 @@ mat_opt = matrix_query(args, basis, index, bound)
 mat_opt.optimize()
 ```
 
-The following files have the experiments in the paper. Note that due to randomness and different machine performance, the result may not be exactly the same as the numbers in the paper. It's suggested that you start from small workloads (set the number of queries `param_m = 64`).
+The following files have the experiments in the paper. Note that due to randomness and different machine performance, the result may not be exactly the same as the numbers in the paper. It's suggested that you start from small workloads (set the number of queries `param_m = 64`). For large workloads (`param_m = 1024`), it could take hours to finish, you can speed up by setting args.maxitercg = 3, or try to use [cupy](https://cupy.dev/) instead of numpy.
 
 - **1_range.py:** Experiment for range queries (section 7.4)
 - **2_discrete.py**: Experiment for random queries (section 7.5)
 - **3_pl94.py:** Experiment for PL-94 (section 7.3)
+  - It takes around 10k iterations and 430 seconds.
 - **4_age.py:** Experiment for Age Pyramids (section 7.6)
+  - it takes around 5k iterations and 160 seconds.
 - **5_marginal.py:** Experiment for marginals (section 7.7)
+  - For t=16, it takes around 3 days to finish.
 - **6_related.py:** Experiment for related queries (section7.8)
 
 Simply run the main function, change the parameters for different settings. You can also change the hyperparameters in the code to achieve more accurate result.
