@@ -2,6 +2,8 @@
 
 Sourse code for the paper  [Optimizing Fitness-For-Use of Differentially Private Linear Queries](https://arxiv.org/abs/2012.00135).
 
+[Here](https://github.com/cmla-psu/ffs) is an extensible julia code base for the solving the optimization problems.
+
 ## Description
 
 This is a convex optimization problem with inequality constraints. We use the barrier method to solve this problem. For the newton's step, conjugate gradient method is used to avoid calculation of inverse matrix. Then we use Armijo's rule to determine the step size. 
