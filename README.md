@@ -2,7 +2,7 @@
 
 Sourse code for the paper  [Optimizing Fitness-For-Use of Differentially Private Linear Queries](https://arxiv.org/abs/2012.00135).
 
-[Here](https://github.com/cmla-psu/ffs) is an extensible julia code base for the solving the optimization problems.
+[Here](https://github.com/cmla-psu/ffs) is an extensible julia code base for solving the optimization problems.
 
 ## Description
 
