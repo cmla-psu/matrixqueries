@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     mat_opt = matrix_query(args, basis, index, bound)
     mat_opt.optimize()
-    # scale the covariacen matrix
+    # scale the covariance matrix
     # make it satisfy all accuracy constraints 
     mat_cov = mat_opt.cov/np.max(mat_opt.f_var)
 
