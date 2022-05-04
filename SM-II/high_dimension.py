@@ -59,12 +59,16 @@ if __name__ == '__main__':
     # set uniform=True to use uniform accuracy constraints
     # set uniform=False to use random accuracy constraints
     work, bound = WRange(param_m, param_n, uniform=True)
+    work = np.array([[1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0], [0, 0, 0, 1]])
+    # work = np.array([[1, 1], [0, 1]])
+    bound = np.ones(4)
     param_m, param_n = np.shape(work)
 
     # configuration parameters
     args = configuration()
     args.init_mat = 'id_index'
-    args.basis = 'work'
+    # args.basis = 'work'
+    args.basis = 'id'
     args.maxitercg = 5
 
     if args.basis == 'id':
